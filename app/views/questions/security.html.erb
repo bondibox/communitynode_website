@@ -1,0 +1,25 @@
+<p>
+One of the most common questions when setting up a cryptocurrency wallet, is "what is the safest wallet?"
+</p>
+<p>
+That is a two-part question. The first part is the security of the wallet itself, and the second part is the security of the wallet's connection to the network. 
+</p>
+<p>
+
+In answering the first part of the question, the vulnerability lies in someone gaining access to your computer and finding your private key. It should be noted that if someone does gain access to your computer then you have much bigger problems. So the first line of defense is to not store your private key on your computer. It's best to print it on several pieces of paper, perhaps keeping one in a safe deposit box. I also like to save my private key to a USB thumb drive so I can copy and paste it when necessary. When you create a wallet you will also get a keystore file, which is an encrypted version of your private key and it is unlocked with a password / passphrase. This is safe to leave on your computer, just as long as you don't write down the password in a text file that sits next to the keystore file! I have a password reminder file that just gives me a hint and tells me how many words are in the password. If you lose your keystore file or the password, you can not recover or recreate them. The best recourse in this event is to use the private key to log into that wallet, and transfer all your coins to a new wallet. 
+</p>
+<p>
+
+The other half of wallet security is the connection that your wallet makes to the blockchain. This is actually the real weakness, as recent spate of hacks has expoited this vulnerability. This attack is known as a man-in-the-middle attack, where the path to the blockchain has been compromised. It is a lot like taking control of someone's DNS, taking the user to a different location than what is expected and waiting for them to enter their private key or keystore - password combination. 
+</p>
+<p>
+
+In the past, some cryptocurrency users have tried to mitigate this risk by using a VPN service, which is all fine and well until the VPN service is compromised, like what just happened with the Hola VPN giving hackers access to people's MEW accounts.
+
+</p>
+<p>
+The FBI has recently identified a malware attack that affects hundreds of thousands of home WiFi routers, called the <a href="https://medium.com/the-new-york-times/your-wi-fi-security-is-probably-weak-heres-how-to-fix-that-db59a48fd853">VPNFilter attack</a>. Again, this works by redirecting the user to a malevolent location. In the case of a tron wallet, it will make you think you are connecting to the authentic Tron blockchain but perhaps you are being sent to a hacker's own copy of the blockchain.
+</p>
+<p>
+
+At the moment, your absolute, best line of defense is to use a wallet that connects to a node that is running on the same computer. Because of the way the blockchain works, every node has incorruptible data. A hacker can get in the middle of the node and the rest of the network, but the java-tron software won't allow that data to be changed. You can trust your own node implicitly. The problem right now is the simplest way to do this is with a command line version of the Tron wallet, called wallet-cli. Software that provides a GUI interface through your web browser is a more complicated install.</p>

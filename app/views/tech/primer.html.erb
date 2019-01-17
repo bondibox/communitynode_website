@@ -1,0 +1,5 @@
+<h1>Primer</h1>
+<p>Here we will give you a broader picture of what the DPoS blockchain is and what our role is in it.</p>
+<p>Today's lesson is the firewall. </p>
+<p>A firewall's main purpose is to restrict incoming connections to our server. When most of us set up a firewall, we include a rule that says "Allow Outgoing" and this lets any application we are using make an outbound connection to the internet. Because it has established this connection, it can also receive information without any explicit firewall rules. This is the way a witness node connects. When it starts up, the witness node looks in the seed.nodes and active.nodes blocks for IPs to connect to. The witness <em>always</em> initiates the connection, and therefore the witness does not need to open any specific ports. You should never list the IP of the witness in your config file.</p>
+<p>The full node, and the solidity node, must be able to accept new incoming connections, and so those firewalls are the ones you want to open to incoming connections on the appropriate ports.</p>

@@ -1,0 +1,40 @@
+<h1>Config File</h1>
+<p>The config.conf file has a lot of options for customization.</p>
+
+<p>The first block you may need to edit is the node.discovery block. Most of us don't need to edit this block, but if you are behind a proxy and having trouble allowing incoming connections you might need to set your external and internal IP addresses.</p>
+
+<p>The node.backup block will allow you to run two witness nodes at the same time, with an automatic failover. Simply alter the config file on Host A to include the backup IP of Host B. And on Host B include the IP of Host A. Your primary witness will be the one with the higher priority status, or the one which started first if they have the same priority. You can list as many backups as you like in this block. You should definitely open the backup port on your firewall.</p>
+
+<p>The node block has several options</p>	
+<p>	Trustnode<br />
+	If you are running a Solidity node, you need to point it to a trusted full node. The trusted node can be running on the same machine under a different set of ports.</p>
+
+	<p>	listen.port <br />
+		This is what I refer to as the "data port."  Most people leave this set to 18888 but if you are running two nodes on one machine you must change this port for one of those nodes. It is also a good security practice to use a nonstandard port.
+	</p>
+
+
+<p>	rpc <br />
+The rpc (grpc) port listens for API instructions to execute. If you are running two nodes on one machine you must change this port for one of those nodes. It is also a good security practice to use a nonstandard port.
+</p>
+
+
+
+<p>	Seed Node<br />
+	New nodes will look to connect to this list of seed nodes to make an initial network connection. There is no need to alter this block.
+</p>
+
+
+
+<p>	Active nodes<br />
+	Use of this block has recently changed.
+	
+</p>
+
+
+<p>localwitness <br />
+	This is where you can put your private key for a witness node. It is the less secure version of the localwitnesskeystore.</p>
+
+<p>localwitnesskeystore <br />
+	This is a .json file that holds the encrypted private key. I found I must put this file in the same directory as the application. 
+When you launch the application this way, it will ask you for a password.</p>

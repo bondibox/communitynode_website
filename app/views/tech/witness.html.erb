@@ -1,0 +1,205 @@
+<h1>Witness Node Configuration</h1>
+<p>This is not a thorough a-z build guide, but rather a transparent audit of our practices. It assumes you have Java 8 installed and know how to get a keystore.json file.</p>
+
+<p>Clone the tron repository to the local machine, then change into the tron directory and build the machine</p>
+<pre><code>git clone https://github.com/tronprotocol/java-tron.git
+cd java-tron
+./gradlew build && ./gradlew clean shadowjar
+</code></pre>
+<pre><code>cp src/main/resources/config.conf build/libs/
+nano build/libs/config.conf    
+</code></pre>
+<p>There is only one key piece of information to enter here - the path to the keystore file.</p>
+<p><strong>config.conf changes</strong></p>
+<pre><code>localwitnesskeystore = [
+  "superrepresentativekeystore.json"
+]
+</code></pre>
+
+<p>Now you will need to put a keystore file in the same directory as the java-tron application (outside paths didn't work for me). I named mine "superrepresentativekeystore.json" but you can use anything. You also do not need to run the java-tron.jar from the local directory, you can call it from any path, but the logs/ and output-directory/ folders will be created from whichever path you are in. It will also always search the java-tron.jar folder for a config file by default, so you don't need to specify that in the command line.</p>
+
+<pre><code>cd build/libs
+java -jar java-tron.jar --witness &
+</code></pre>
+
+
+
+
+
+<p><strong>LOG FILE EXAMPLES</strong></p>
+<p>The first lines of logs/tron.log should be</p>
+<pre><code>Full node running.
+Refreshing org.springframework.context.annotation.AnnotationConfigApplicationCote [Thu Apr 26 18:47:17 EDT 2018]; root of context hierarchy
+Transaction create succeeded！
+
+Unknown channel option 'SO_KEEPALIVE' for channel '[id: 0x9ec67546]' 
+Reading Node statistics from PeersStore: 0 nodes. 
+Add new node: NodeHandler[state: Discovered, node:  
+Change node: old NodeHandler[state: Discovered, node:  
+</code></pre>
+<p>Then it will scroll through adding nodes from the network</p>
+<pre><code>Add new node: NodeHandler[state: Discovered, node: 93.35.144.199:3484, id=609cd88e], size=19
+Add new node: NodeHandler[state: Discovered, node: 109.27.36.86:50196, id=61c5b1bc], size=20
+</code></pre>
+<p>Finally it looks like you've got something, only to be disappointed in the details:</p>
+<pre><code>Peer stats:
+Active peers
+Other connected peers
+
+LocalNode stats:
+MyHeadBlockNum: 0
+advToSpreadNum: 0
+advObjectToFetchNum: 0
+advObjWeRequestedNum: 0
+unSyncNum: 0
+blockWaitToProcess: 0
+blockJustReceived: 0
+syncBlockIdWeRequested: 0
+badAdvObj: 0
+</code></pre>
+<p>Eventually you'll connect to 47.91.246.252:18888 which seems to be the most trusted peer.</p>
+<pre><code>Other connected peers
+Peer 47.91.246.252:18888: [           aed3688f, ping    215 ms]
+connect time: 1969-12-31 19:00:00.0
+last know block num: 0
+needSyncFromPeer:true
+needSyncFromUs:false
+syncToFetchSize:0
+syncToFetchSizePeekNum:-1
+syncBlockRequestedSize:0
+unFetchSynNum:0
+syncChainRequested:2018-04-26 18:49:10.483
+blockInPorc:0
+NodeStat[reput: 390(0), discover: 1/1 0/0 5/5 3/3 229ms, p2p: 1/1/1 , tron: 3/2   
+
+Handle Message: INVENTORY: First hash: 3d0f8c2e68d89082f2d53222c6debdeb3254eba7dd5f6ab96946e60bdb39c588 End hash: 3d0f8c2e68d89082f2d53222c6debdeb3254eba7dd5f6ab96946e60bdb39c588 from 
+Peer: aed3688f52718c895d3181eb8223f6556f0689f6515862fb08e70200b5970aae7f6c97fc304946630db595c3f9d75a5e056496045e536dc55a1a143ccc49925d | /47.91.246.252:18888
+channel active, /47.91.246.252:47240
+Finish handshake with /47.91.246.252:47240.
+rcv BLOCK_CHAIN_INVENTORY from /47.91.246.252:18888
+Handle Message: BLOCK_CHAIN_INVENTORY : first blockId: Num:0,ID:00000000000000006aaae11afeca9b84f031ef5e45c311ac302eacd4c6cbb73b end blockId: Num:500,ID:00000000000001f40ae2b2aae1b96655e4d614fdd3e927cee636968b06651300 size: 501 from 
+Peer: aed3688f52718c895d3181eb8223f6556f0689f6515862fb08e70200b5970aae7f6c97fc304946630db595c3f9d75a5e056496045e536dc55a1a143ccc49925d | /47.91.246.252:18888
+update peer 47.91.246.252 block both we have, Num:0,ID:00000000000000006aaae11afeca9b84f031ef5e45c311ac30
+2eacd4c6cbb73b
+headNumber:0
+syncBeginNumber:0
+solidBlockNumber:0
+headNumber:0
+syncBeginNumber:0
+solidBlockNumber:0
+Send Message:SYNC_BLOCK_CHAIN: 
+Num:0,ID:00000000000000006aaae11afeca9b84f031ef5e45c311ac302eacd4c6cbb73b
+Num:251,ID:00000000000000fbd7da930cb3b20ba7235cda24f51b48d73cb27534ec8300ee
+Num:376,ID:0000000000000178201326b872ec527841e9a2b9d64837800eb2179a77be691b
+Num:439,ID:00000000000001b7ccda2628b8f2f7841be1251be901d8b7465be28ff21ef861
+Num:470,ID:00000000000001d6dca3061341dbd59f6a84074691dc9d88e452a55e4254dba4
+Num:486,ID:00000000000001e62adc9c52ad1281dbc862fa54e1770589fb7d49d227f03e1d
+Num:494,ID:00000000000001eee197065f8628548a675e80ac7762118eb1a506af21f336c4
+Num:498,ID:00000000000001f2182f8ff99eddf21df25968a11ca2c4f77bf3986e38ffd612
+Num:500,ID:00000000000001f40ae2b2aae1b96655e4d614fdd3e927cee636968b06651300 to
+aed3688f52718c895d3181eb8223f6556f0689f6515862fb08e70200b5970aae7f6c97fc304946630db595c3f9d75a5e056496045e536dc55a1a143ccc49925d | /47.91.246.252:18888
+18:49:10.963 INFO  [MessageQueueTimer-1] [MessageQueue](MessageQueue.java:186) send SYNC_BLOCK_CHAIN to /47.91.246.252:18888
+</code></pre>
+<p>After some kind of handshake the trusted node goes from 'Other connected peers' to 'Active peers'</p>
+<pre><code>Active peers
+Peer 47.91.246.252:18888: [           aed3688f, ping    271 ms]
+connect time: 2018-04-26 18:49:20.459
+last know block num: 0
+needSyncFromPeer:true
+needSyncFromUs:false
+syncToFetchSize:0
+syncToFetchSizePeekNum:-1
+syncBlockRequestedSize:0
+unFetchSynNum:0
+syncChainRequested:2018-04-26 18:49:20.462
+blockInPorc:0
+NodeStat[reput: 180(0), discover: 1/1 0/0 5/5 3/3 229ms, p2p: 2/2/2 , tron: 8/4 X 1&lt;=DUPLICATE_PEER 
+</code></pre>
+<p>Finally we start to sync blocks</p>
+<pre><code>There are 31922 blocks we need to sync.
+
+handle Block number is 1
+Handle Message: [Message Type: BLOCK, Message Hash:0000000000000002ecb773a55f1f0311372e34e47749af06ed973e37299b1159] from Peer: aed3688f52718c895d3181eb8223f6556f0689f6515862fb08e70200b5970aae7f6c97fc304946630db595c3f9d75a5e056496045e536dc55a1a143ccc49925d | /47.91.246.252:18888
+</code></pre>
+<p>Once you have caught up to the blockchain you'll mostly just see transactions:</p>
+<pre><code>1:TransactionCapsule 
+[ hash=51d9db7a72aa66886b8886d2352f600c67acf14c8a39fa9639491342d268b802
+contract list:{ [0] type: TransferContract
+from address=[B@d6a90e1
+to address=[B@62622a52
+transfer amount=8000000
+sign=G16nepaM8mBg//Yp06AZocYlYxSz8XIc6+d9hsn12r3GIVTWiP7mOPGhz8VziZ/4+107JQCZTY6N29ICH6IIj+4=
+}
+]
+</code></pre>
+<p>Finally you'll receive notice of your place in the queue</p>
+<pre><code>save block num:33716
+update peer 47.91.246.252 block both we have Num:33716,ID:00000000000083b46d4a63d6cbda07f0fd5ce620230545c629b
+scheduledWitness:a00a9309758508413039e4bc5a3d113f3ecc55031d, currentSlot:304959039
+</code></pre>
+<p>Here's a command to extract the display of discovered nodes.</p>
+<pre><code>more ~/java-tron/logs/tron.log | grep nodes.
+</code></pre>
+<blockquote>
+<p>Write Node statistics to PeersStore: 2375 nodes.</p>
+</blockquote>
+<p>Next article - Adding a Solidity Node</p>
+<h1><a id="user-content-031424478-info--nioeventloopgroup-4-2-otcnnnodeimpl-update-peer-104237378-block-both-we-have-num215999id0000000000034bbf8af84f11623bd1cbc6f8eb43caafbc08d35e05e59fb60c7f031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-id--0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-number--216000031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-timestamp--1526627667000031427271-info--nioeventloopgroup-4-2-otcdmanager-update-solid-block-num--215992031427274-info--nioeventloopgroup-4-2-otcdmanager-save-block-blockcapsule031427276-info--nioeventloopgroup-4-2-otcnnnodeimpl-update-peer-542194156-block-both-we-have-num216000id0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc031427276-info--nioeventloopgroup-4-2-otcnnnodeimpl-ready-to-broadcast-a-block-its-hash-is-0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abclast-know-block-num-216000blockinporc0031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-id--0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-number--216001031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-timestamp--1526627670000031430550-info--tronjclientworker-1-otcnnnodeimpl-ready-to-broadcast-a-block-its-hash-is-0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00blockwaittoproc-0blockjustreceived-0031436604-info--nioeventloopgroup-4-2-messagequeue-rcv-fetch_inv_data-from-10423737834706031436604-info--nioeventloopgroup-4-2-otcnnnodeimpl-handle-message-fetch_inv_datablock-size1-first-hash0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-10423737834706--5b3be0c2f7a89af0bbb62a25570630824f7dfef5d0925cf0c546b355c6740f16494bd35762781a95c901beb9af70cdec1f9dba041a11786dd7e181f31f5bbef6031436605-info--nioeventloopgroup-4-2-messagequeue-send-block-to-10423737834706031436615-info--nioeventloopgroup-4-1-messagequeue-rcv-block-from-1818822713057404031436616-info--nioeventloopgroup-4-1-otcnnnodeimpl-handle-message-message-type-block-message-hash-0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-1818822713057404--55622281e7aac3be8470999e5a52d80fcdf26e4cabce872b39bfb4933973f06204acdb276136096aae5ac6c03e8c12124c1cab497fc1d286ae9b2a6b8f57805e031436617-info--nioeventloopgroup-4-1-otcnnnodeimpl-handle-block-number-is-216003031436634-info--nioeventloopgroup-4-1-messagequeue-rcv-p2p_ping-from-139991732755810031436634-info--nioeventloopgroup-4-1-messagequeue-send-p2p_pong-to-139991732755810031436639-info--nioeventloopgroup-4-1-messagequeue-rcv-p2p_pong-from-139991732755810031436685-info--tronjclientworker-1-messagequeue-rcv-inventory-from-131259513418888031436685-info--tronjclientworker-1-otcnnnodeimpl-handle-message-inventoryblock-size1-first-hash0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-131259513418888--9c1ce86bbad3e1e40cdc848d0cbbe1aace56aff67520afdd5e9745ee559f4360f72bc0f374c6fba58e23aa48f67b1fcb9ac5909edc015191c9593cfbcc144e09031437854-info--pool-8-thread-1-syncpool-address-19520132018888-ided31ce4c-nodestatreput-3510-discover-2727-00-49634963-24532453-117ms-p2p-202020--tron-200-x-0031437857-info--pool-8-thread-1-syncpool----------active-channel-20-node-in-user-size-20031437857-info--pool-8-thread-1-syncpool-47254165518888--e89ec4a92ab927175caf3e42241375289ceb63e9a14b23edb6a04085b247fdc90a0b883214bf8af157a51109740cefb9e4157f420e19b1e9211992cc715130db031437863-info--pool-8-thread-1-syncpool-peer-statsactive-peers" class="anchor" aria-hidden="true" href="#031424478-info--nioeventloopgroup-4-2-otcnnnodeimpl-update-peer-104237378-block-both-we-have-num215999id0000000000034bbf8af84f11623bd1cbc6f8eb43caafbc08d35e05e59fb60c7f031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-id--0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-number--216000031427269-info--nioeventloopgroup-4-2-otcddynamicpropertiesstore-update-latest-block-header-timestamp--1526627667000031427271-info--nioeventloopgroup-4-2-otcdmanager-update-solid-block-num--215992031427274-info--nioeventloopgroup-4-2-otcdmanager-save-block-blockcapsule031427276-info--nioeventloopgroup-4-2-otcnnnodeimpl-update-peer-542194156-block-both-we-have-num216000id0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc031427276-info--nioeventloopgroup-4-2-otcnnnodeimpl-ready-to-broadcast-a-block-its-hash-is-0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abclast-know-block-num-216000blockinporc0031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-id--0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-number--216001031430541-info--tronjclientworker-1-otcddynamicpropertiesstore-update-latest-block-header-timestamp--1526627670000031430550-info--tronjclientworker-1-otcnnnodeimpl-ready-to-broadcast-a-block-its-hash-is-0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00blockwaittoproc-0blockjustreceived-0031436604-info--nioeventloopgroup-4-2-messagequeue-rcv-fetch_inv_data-from-10423737834706031436604-info--nioeventloopgroup-4-2-otcnnnodeimpl-handle-message-fetch_inv_datablock-size1-first-hash0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-10423737834706--5b3be0c2f7a89af0bbb62a25570630824f7dfef5d0925cf0c546b355c6740f16494bd35762781a95c901beb9af70cdec1f9dba041a11786dd7e181f31f5bbef6031436605-info--nioeventloopgroup-4-2-messagequeue-send-block-to-10423737834706031436615-info--nioeventloopgroup-4-1-messagequeue-rcv-block-from-1818822713057404031436616-info--nioeventloopgroup-4-1-otcnnnodeimpl-handle-message-message-type-block-message-hash-0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-1818822713057404--55622281e7aac3be8470999e5a52d80fcdf26e4cabce872b39bfb4933973f06204acdb276136096aae5ac6c03e8c12124c1cab497fc1d286ae9b2a6b8f57805e031436617-info--nioeventloopgroup-4-1-otcnnnodeimpl-handle-block-number-is-216003031436634-info--nioeventloopgroup-4-1-messagequeue-rcv-p2p_ping-from-139991732755810031436634-info--nioeventloopgroup-4-1-messagequeue-send-p2p_pong-to-139991732755810031436639-info--nioeventloopgroup-4-1-messagequeue-rcv-p2p_pong-from-139991732755810031436685-info--tronjclientworker-1-messagequeue-rcv-inventory-from-131259513418888031436685-info--tronjclientworker-1-otcnnnodeimpl-handle-message-inventoryblock-size1-first-hash0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b-frompeer-131259513418888--9c1ce86bbad3e1e40cdc848d0cbbe1aace56aff67520afdd5e9745ee559f4360f72bc0f374c6fba58e23aa48f67b1fcb9ac5909edc015191c9593cfbcc144e09031437854-info--pool-8-thread-1-syncpool-address-19520132018888-ided31ce4c-nodestatreput-3510-discover-2727-00-49634963-24532453-117ms-p2p-202020--tron-200-x-0031437857-info--pool-8-thread-1-syncpool----------active-channel-20-node-in-user-size-20031437857-info--pool-8-thread-1-syncpool-47254165518888--e89ec4a92ab927175caf3e42241375289ceb63e9a14b23edb6a04085b247fdc90a0b883214bf8af157a51109740cefb9e4157f420e19b1e9211992cc715130db031437863-info--pool-8-thread-1-syncpool-peer-statsactive-peers"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>03:14:24.478 INFO  [nioEventLoopGroup-4-2] o.t.c.n.n.NodeImpl update peer 104.237.3.78 block both we have Num:215999,ID:0000000000034bbf8af84f11623bd1cbc6f8eb43caafbc08d35e05e59fb60c7f
+03:14:27.269 INFO  [nioEventLoopGroup-4-2] o.t.c.d.DynamicPropertiesStore update latest block header id = 0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc
+03:14:27.269 INFO  [nioEventLoopGroup-4-2] o.t.c.d.DynamicPropertiesStore update latest block header number = 216000
+03:14:27.269 INFO  [nioEventLoopGroup-4-2] o.t.c.d.DynamicPropertiesStore update latest block header timestamp = 1526627667000
+03:14:27.271 INFO  [nioEventLoopGroup-4-2] o.t.c.d.Manager update solid block, num = 215992
+03:14:27.274 INFO  [nioEventLoopGroup-4-2] o.t.c.d.Manager save block: BlockCapsule
+03:14:27.276 INFO  [nioEventLoopGroup-4-2] o.t.c.n.n.NodeImpl update peer 54.219.41.56 block both we have Num:216000,ID:0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc
+03:14:27.276 INFO  [nioEventLoopGroup-4-2] o.t.c.n.n.NodeImpl Ready to broadcast a block, Its hash is 0000000000034bc061fcd76d5350d4992dc44f38513ae19800525ca9a8e80abc
+last know block num: 216000
+blockInPorc:0
+03:14:30.541 INFO  [TronJClientWorker-1] o.t.c.d.DynamicPropertiesStore update latest block header id = 0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00
+03:14:30.541 INFO  [TronJClientWorker-1] o.t.c.d.DynamicPropertiesStore update latest block header number = 216001
+03:14:30.541 INFO  [TronJClientWorker-1] o.t.c.d.DynamicPropertiesStore update latest block header timestamp = 1526627670000
+03:14:30.550 INFO  [TronJClientWorker-1] o.t.c.n.n.NodeImpl Ready to broadcast a block, Its hash is 0000000000034bc10c79b059d95152c5a65b0b3415dcafc7685418c9db9c7b00
+blockWaitToProc: 0
+blockJustReceived: 0
+03:14:36.604 INFO  [nioEventLoopGroup-4-2] MessageQueue rcv FETCH_INV_DATA from /104.237.3.78:34706
+03:14:36.604 INFO  [nioEventLoopGroup-4-2] o.t.c.n.n.NodeImpl Handle Message: FETCH_INV_DATA:BLOCK, size=1, First hash:0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b from
+Peer: /104.237.3.78:34706 | 5b3be0c2f7a89af0bbb62a25570630824f7dfef5d0925cf0c546b355c6740f16494bd35762781a95c901beb9af70cdec1f9dba041a11786dd7e181f31f5bbef6
+03:14:36.605 INFO  [nioEventLoopGroup-4-2] MessageQueue send BLOCK to /104.237.3.78:34706
+03:14:36.615 INFO  [nioEventLoopGroup-4-1] MessageQueue rcv BLOCK from /18.188.227.130:57404
+03:14:36.616 INFO  [nioEventLoopGroup-4-1] o.t.c.n.n.NodeImpl Handle Message: [Message Type: BLOCK, Message Hash: 0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b] from
+Peer: /18.188.227.130:57404 | 55622281e7aac3be8470999e5a52d80fcdf26e4cabce872b39bfb4933973f06204acdb276136096aae5ac6c03e8c12124c1cab497fc1d286ae9b2a6b8f57805e
+03:14:36.617 INFO  [nioEventLoopGroup-4-1] o.t.c.n.n.NodeImpl handle Block number is 216003
+03:14:36.634 INFO  [nioEventLoopGroup-4-1] MessageQueue rcv P2P_PING from /139.99.173.27:55810
+03:14:36.634 INFO  [nioEventLoopGroup-4-1] MessageQueue send P2P_PONG to /139.99.173.27:55810
+03:14:36.639 INFO  [nioEventLoopGroup-4-1] MessageQueue rcv P2P_PONG from /139.99.173.27:55810
+03:14:36.685 INFO  [TronJClientWorker-1] MessageQueue rcv INVENTORY from /13.125.95.134:18888
+03:14:36.685 INFO  [TronJClientWorker-1] o.t.c.n.n.NodeImpl Handle Message: INVENTORY:BLOCK, size=1, First hash:0000000000034bc3731c20f373c0e3949ffa262607c1a9f9849f7e0a7c5c778b from
+Peer: /13.125.95.134:18888 | 9c1ce86bbad3e1e40cdc848d0cbbe1aace56aff67520afdd5e9745ee559f4360f72bc0f374c6fba58e23aa48f67b1fcb9ac5909edc015191c9593cfbcc144e09
+03:14:37.854 INFO  [pool-8-thread-1] SyncPool address: 195.201.32.0:18888, ID:ed31ce4c NodeStat[reput: 351(0), discover: 27/27 0/0 4963/4963 2453/2453 117ms, p2p: 20/20/20 , tron: 20/0 X 0<br>
+03:14:37.857 INFO  [pool-8-thread-1] SyncPool -------- active channel 20, node in user size 20
+03:14:37.857 INFO  [pool-8-thread-1] SyncPool /47.254.16.55:18888 | e89ec4a92ab927175caf3e42241375289ceb63e9a14b23edb6a04085b247fdc90a0b883214bf8af157a51109740cefb9e4157f420e19b1e9211992cc715130db
+03:14:37.863 INFO  [pool-8-thread-1] SyncPool Peer stats:
+Active peers</h1>
+<p>Peer 47.98.58.42:18888: [           bf620d79, ping    250 ms]-----------
+connect time: 2018-05-18 02:58:17.068
+last know block num: 216001
+needSyncFromPeer:false
+needSyncFromUs:false
+syncToFetchSize:0
+syncToFetchSizePeekNum:-1
+syncBlockRequestedSize:0
+unFetchSynNum:0
+syncChainRequested:NULL
+blockInPorc:0
+NodeStat[reput: 251(0), discover: 1/1 1/1 0/0 4858/4858 212ms, p2p: 10/10/12 , tron: 20039/17839 X 0</p>
+<h1><a id="user-content-other-connected-peers" class="anchor" aria-hidden="true" href="#other-connected-peers"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Other connected peers</h1>
+<p>03:14:38.174 INFO  [TronJClientWorker-1] MessageQueue rcv INVENTORY from /47.254.16.55:18888
+03:14:38.174 INFO  [TronJClientWorker-1] o.t.c.n.n.NodeImpl Handle Message: INVENTORY:TRX, size=1, First hash:957eb5ca18f233a655bf3e51bfb3bef8497f86a0af54a2ec46d552799a99a976 from
+Peer: /47.254.16.55:18888 | e89ec4a92ab927175caf3e42241375289ceb63e9a14b23edb6a04085b247fdc90a0b883214bf8af157a51109740cefb9e4157f420e19b1e9211992cc715130db
+03:14:38.179 INFO  [broad-msg-] MessageQueue send FETCH_INV_DATA to /35.230.28.129:58016
+03:14:38.247 INFO  [nioEventLoopGroup-4-1] MessageQueue rcv TRXS from /35.230.28.129:58016
+03:14:38.247 INFO  [nioEventLoopGroup-4-1] o.t.c.n.n.NodeImpl Handle Message: trx_size:1 from
+Peer: /35.230.28.129:58016 | 7a3ca9de7ab064f047eeb5a7ab262094785cb4d78efde426251f7e7bba635ae096d2e48c9bde3a5b6bfc35749733660ad3be471dbde4220dc176adbb4814587b
+03:14:38.247 INFO  [nioEventLoopGroup-4-1] o.t.c.n.n.NodeImpl onHandleTransactionsMessage, size = 1, peer 35.230.28.129
+03:14:38.247 INFO  [nioEventLoopGroup-4-1] o.t.c.n.n.NodeDelegateImpl handle transaction
+03:14:38.247 INFO  [nioEventLoopGroup-4-1] o.t.c.d.Manager push transaction</p>
+</article>
